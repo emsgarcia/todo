@@ -50,5 +50,6 @@ Route::get('/', function () {
 // Route::get('/sample',"SampleController@greetPerson");
 // Route::get('/fruits',"SampleController@nameofFruits");
 Route::get('/tasklist', 'TaskController@showTask');
-
-
+Route::post('/newtask', 'TaskController@addTask');
+Route::delete('/taskdelete/{taskid}', 'TaskController@deleteTask');
+Route::put('/taskupdate/{taskid}', 'TaskController@updateTask');

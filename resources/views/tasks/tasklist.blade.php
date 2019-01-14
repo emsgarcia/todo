@@ -27,13 +27,15 @@
 <div class='container my-5 p-5'>
 	<div class='row mb-5'>
 		<div class='col'>
-			<form class='d-flex align-items-center'>
+			<form action='/newtask' class='d-flex align-items-center' method="POST">
+				{{ csrf_field() }}
 			  <div class="form-group flex-fill">
 			    <label for="exampleInputEmail1" class='font-weight-bold'>Task Name:</label>
 			    <input type="text" class="form-control" id="newtask" name='newtask'>
+			     <!-- <input type="text" class="form-control" id="statustask" name='statustask'> -->
 			  </div>
 			 
-			  <button type="submit" class="btn btn-primary mt-3 ml-5">Submit</button>
+			  <button type="submit" class="btn btn-primary mt-3 ml-5">SUBMIT</button>
 			</form>
 		</div>
 	</div>
@@ -49,32 +51,19 @@
 
 				</thead>
 				<tbody>
-					<tr>
-						<td>Sample Task 1</td>
-						<td>5 mins ago</td>
-						<td>
-							<button type='button' class='btn btn-danger' onclick="openDeleteModal()">Delete</button>
-							<button type='button' class='btn btn-primary' onclick="openEditModal()">Edit</button>
-						</td>
-					</tr>
 
+				@foreach($tasks as $task)
 					<tr>
-						<td>Sample Task 2</td>
+						<td>{{ $task->name }}</td>
 						<td>5 mins ago</td>
 						<td>
-							<button type='button' class='btn btn-danger' onclick="openDeleteModal()" data-toggle='modal'>Delete</button>
-							<button type='button' class='btn btn-primary' onclick="openEditModal()" data-toggle='modal'>Edit</button>
+							<button type='button' class='btn btn-danger' onclick="openDeleteModal({{ $task->id }}, '{{ $task->name }}')">Delete</button>
+							<button type='button' class='btn btn-primary' onclick="openEditModal({{ $task->id }}, '{{ $task->name }}')" style='padding-left:16px;padding-right:16px;'>Edit</button>
 						</td>
 					</tr>
+				@endforeach
 
-					<tr>
-						<td>Sample Task 3</td>
-						<td>5 mins ago</td>
-						<td>
-							<button type='button' class='btn btn-danger' onclick="openDeleteModal()" data-toggle='modal'>Delete</button>
-							<button type='button' class='btn btn-primary' onclick="openEditModal()" data-toggle='modal'>Edit</button>
-						</td>
-					</tr>
+					
 				</tbody>
 			</table>
 		</div>
@@ -93,13 +82,23 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        Do you want to delete this task?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+      
+	    <form method="POST" id='deleteTask'>
+	      	{{ csrf_field() }}
+	      	{{ method_field('DELETE') }}
+	      	<div class="modal-body">
+	        
+		        <span id='taskDel'>Do you want to delete this task?</span>
+
+		        
+
+		    </div>
+	      	<div class="modal-footer">
+	      		<button type='submit' class='btn btn-danger'>Delete</button>
+	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	      	</div>
+		</form>
+      
     </div>
   </div>
 </div>
@@ -115,16 +114,23 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-      	<form>
-      		<label>Task:</label>
-      		<input type='text' name'editedtask'></input>
-      		<button type="submit" class="btn btn-primary">Save changes</button>
-      	</form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
+      <form method="POST" id='editTaskForm'>
+	      	{{ csrf_field() }}
+	      	{{ method_field('PUT') }}
+	      	<div class="modal-body">
+	        
+		       
+		        <label>Task:</label>
+      			<input type='text' name='editedtask' id='editedtask'></input>
+		        
+
+		    </div>
+	      	<div class="modal-footer">
+	      		<button type='submit' class='btn btn-primary'>SAVE CHANGES</button>
+	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	      	</div>
+		</form>
+      
     </div>
   </div>
 </div>
@@ -132,13 +138,17 @@
 
 
 <script type="text/javascript">
-	function openDeleteModal(){
+	function openDeleteModal(id, name){
+		$('#deleteTask').attr('action','/taskdelete/' + id);
+		$('#taskDel').html("Do you want to delete task " + name + "?");
 		$('#deleteModal').modal('show');
 	}
 
-	function openEditModal(){
+	function openEditModal(id, name){
+		$('#editTaskForm').attr('action', '/taskupdate/' + id);
 		$('#editModal').modal('show');
 	}
+
 </script>
 
 </body>
